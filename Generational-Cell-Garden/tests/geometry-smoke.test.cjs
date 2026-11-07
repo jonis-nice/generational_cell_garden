@@ -1,0 +1,8 @@
+const fs=require('fs'),vm=require('vm');
+const s=fs.readFileSync(require('path').join(__dirname,'..','app.js'),'utf8');
+const get=(a,b)=>s.slice(s.indexOf(a),s.indexOf(b));
+const src=`const colors=['#b9c6a0']; const id=()=>Math.random().toString(36).slice(2,10); const clamp=(n,a,b)=>Math.max(a,Math.min(b,n)); function bounds(poly){return{x:Math.min(...poly.map(p=>p.x)),y:Math.min(...poly.map(p=>p.y)),w:Math.max(...poly.map(p=>p.x))-Math.min(...poly.map(p=>p.x)),h:Math.max(...poly.map(p=>p.y))-Math.min(...poly.map(p=>p.y))}} function inside(p,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){let a=poly[i],b=poly[j];if(((a.y>p.y)!==(b.y>p.y))&&(p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x))c=!c}return c} function area(poly){let a=0;for(let i=0,j=poly.length-1;i<poly.length;j=i++)a+=poly[j].x*poly[i].y-poly[i].x*poly[j].y;return Math.abs(a/2)} function symbolType(){return 'perennial'} function botanicalBloomColor(p){return '#b77c91'}\n${get('function makeGroup(', 'function render()')}\nthis.makeGroup=makeGroup; this.inside=inside;`;
+const ctx={};vm.createContext(ctx);vm.runInContext(src,ctx);
+const bed=[{x:1,y:1},{x:22,y:1},{x:22,y:7},{x:16,y:8},{x:10,y:7},{x:4,y:8},{x:1,y:6}];
+const plant={id:'p1',name:'Test',latin:'Salvia nemorosa',category:'Perenner',spacing:40,diameter:.45,color:'#668b65'};
+for(let role of ['matrix','secondary','accent']){let g=ctx.makeGroup(plant,bed,42,2,{x:11,y:4},role,1);let bad=g.points.filter(p=>!ctx.inside(p,bed)||!ctx.inside(p,g.poly));console.log(role,'points',g.points.length,'bad',bad.length,'poly area',g.poly.length);if(bad.length)process.exitCode=1}

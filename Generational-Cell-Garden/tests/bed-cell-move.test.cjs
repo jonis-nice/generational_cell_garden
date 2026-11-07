@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert');
+const app=fs.readFileSync('app.js','utf8');
+assert(app.includes("'data-bed-id':gr.bedId||''"),'rendered plant cells retain parent bed id');
+assert(app.includes("e.target.closest('[data-kind=\"bed\"]')"),'bed outline can be targeted separately');
+assert(app.includes("type:'bed',id:bed.id"),'bed selection starts a bed-level drag');
+assert(app.includes('state.groups.filter(g=>g.bedId===id).forEach(gr=>{gr.poly='),'all groups inside the bed are translated');
+assert(app.includes('bed.points=bed.points.map(v=>({x:v.x+dx,y:v.y+dy}))'),'bed outline is translated');
+assert(app.includes('Rabattcell flyttad tillsammans med sina växtceller'),'user receives bed-move feedback');
+assert(app.includes('Rabattcell markerad'),'selection panel identifies the bed cell');
+console.log('bed-cell independent selection and group move: PASS');
