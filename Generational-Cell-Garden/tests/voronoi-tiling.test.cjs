@@ -1,0 +1,12 @@
+const fs=require('fs'),assert=require('assert');
+const app=fs.readFileSync('app.js','utf8');
+const i=app.indexOf("$('generateBtn').onclick=()=>{");
+const j=app.indexOf("$('groupSpecies').onchange=",i);
+const fn=app.slice(i,j);
+assert.ok(fn.includes('state.beds.forEach((bed,bi)=>'),'plant groups generate inside each selected bed');
+assert.ok(fn.includes('const b=bounds(bed.points)'),'bed bounds are defined before seed placement');
+assert.ok(fn.includes('clipHalfPlane(cell,nx,ny,c)'),'species cells are partitioned within bed boundary');
+assert.ok(fn.includes('cells.forEach((cell,zi)=>'),'each species cell becomes a botanical mass');
+assert.ok(fn.includes('state.groups.push(group)'),'generated groups are added to project state');
+assert.ok(!fn.includes('cellComposition')&&!fn.includes('selectedCellComposition'),'plant cells are independent from bed composition choice');
+console.log('plant-cell generation handler and clipped tessellation: PASS');

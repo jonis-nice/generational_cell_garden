@@ -1,0 +1,13 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const src=fs.readFileSync(__dirname+'/../catalog.js','utf8');
+const ctx={window:{}};vm.createContext(ctx);vm.runInContext(src,ctx);
+const plants=ctx.window.PLANT_CATALOG;
+const allowed=new Set(['Perenner','Prydnadsgräs','Lökväxter','Marktäckare']);
+const auto=plants.filter(p=>allowed.has(p.category)&&p.compositionReview==='granskad_kallor'&&p.verifiedSource);
+assert(auto.length>=48,`Expected at least 48 reviewed auto plants, got ${auto.length}`);
+assert(auto.every(p=>p.winterStructure&&p.siteCompatibility&&p.compositionRole),'Automatic pool contains incomplete profile');
+assert(!auto.some(p=>p.latin==='Lavandula angustifolia'),'Lavender shrub must not enter strict perennial pool');
+assert(plants.some(p=>p.latin==='Lavandula angustifolia'&&p.category==='Vedartade växter'),'Lavender should remain in catalogue with corrected category');
+assert(plants.some(p=>p.compositionReview==='ej_granskad'),'Unreviewed species must remain explicitly unreviewed');
+assert(!auto.some(p=>p.id==='p075'||p.id==='p054'),'High-spread risk species must not enter automatic pool before full risk review');
+console.log(`Catalog ${plants.length}; reviewed automatic perennials/grasses/groundcovers ${auto.length}; unreviewed records preserved: PASS`);
