@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const ctx={window:{}};vm.createContext(ctx);vm.runInContext(fs.readFileSync(__dirname+'/../catalog.js','utf8'),ctx);
+const plants=ctx.window.PLANT_CATALOG;
+const by=id=>plants.find(p=>p.id===id);
+assert.equal(by('p075').spreadRisk,'high');
+assert.equal(by('p054').spreadRisk,'high');
+assert.equal(by('p138').spreadRisk,'medium');
+assert(by('p075').spreadRiskSource && by('p054').spreadRiskSource,'High spread risk needs provenance');
+const auto=plants.filter(p=>['Perenner','Prydnadsgräs','Lökväxter','Marktäckare'].includes(p.category)&&p.compositionReview==='granskad_kallor'&&p.verifiedSource&&p.spreadRisk!=='high');
+assert(!auto.some(p=>p.spreadRisk==='high'));
+console.log(`spread risk audit: PASS (${auto.length} auto candidates; high-risk taxa excluded)`);

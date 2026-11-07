@@ -1,0 +1,12 @@
+const assert=require('assert'),fs=require('fs'),path=require('path');
+const src=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8'),html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
+assert(src.includes('function speciesVisualKey('),'species key must exist');
+assert(src.includes('function speciesVisualProfile('),'plant characteristic profile must exist');
+assert(src.includes('function showPlantPortrait('),'clickable plant portrait must exist');
+assert(src.includes('api.inaturalist.org/v1/taxa/autocomplete'),'portrait must retrieve a taxon photo');
+assert(src.includes("drawSymbol(g,p,1.38)"),'symbol size must be fixed');
+assert(!html.includes('id="symbolScale"'),'symbol size control must be removed');
+assert(!html.includes('id="groupSpacing"'),'planting spacing control must be removed');
+assert(src.includes("if(/rubus idaeus|hallon/.test(latin+' '+name))"),'raspberry requires berry-and-foliage visual identity');
+assert(src.includes("if(/eutrochium|rosenflockel/.test(latin+' '+name))"),'Eutrochium requires flower-cluster visual identity');
+console.log('species visual identity and portraits: PASS');
